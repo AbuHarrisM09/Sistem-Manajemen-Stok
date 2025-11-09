@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 
-class Pengguna extends Model
+class Pengguna extends Authenticatable
 {
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
@@ -21,7 +21,7 @@ class Pengguna extends Model
         'password',
     ];
 
-    // 🔐 Mutator: otomatis hash password
+    // Mutator: otomatis hash password
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
