@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\BahanController; // ← tambahkan ini
+use App\Http\Controllers\Admin\BahanController;
+use App\Http\Controllers\Pegawai\TransaksiController; // ← tambahkan ini
 use App\Http\Middleware\RoleMiddleware;
 
 // Guest: hanya bisa ke login
@@ -23,21 +24,23 @@ Route::middleware('auth:pengguna')->group(function () {
             return view('admin.dashboard', compact('bahans'));
         })->name('admin.dashboard');
 
-        // CRUD Data Bahan (sesuai SRS 3.4.1.1–3.4.1.3)
-        Route::get('/admin/bahan', [BahanController::class, 'index'])->name('admin.bahan.index');
-        Route::get('/admin/bahan/create', [BahanController::class, 'create'])->name('admin.bahan.create');
-        Route::post('/admin/bahan', [BahanController::class, 'store'])->name('admin.bahan.store');
-        Route::get('/admin/bahan/{bahan}/edit', [BahanController::class, 'edit'])->name('admin.bahan.edit');
-        Route::put('/admin/bahan/{bahan}', [BahanController::class, 'update'])->name('admin.bahan.update');
-        Route::delete('/admin/bahan/{bahan}', [BahanController::class, 'destroy'])->name('admin.bahan.destroy');
+        // CRUD Data Bahan (SRS 3.4.1.1–3.4.1.3)
+        Route::resource('admin/bahan', BahanController::class)->names('admin.bahan');
     });
 
-    // === PEGAWAI ONLY ===
-    Route::middleware([RoleMiddleware::class . ':pegawai'])->group(function () {
+    // === PEGAWAI & ADMIN (boleh akses transaksi) ===
+    Route::middleware([RoleMiddleware::class . ':pegawai,admin'])->group(function () {
+        // Dashboard Pegawai
         Route::get('/pegawai/dashboard', function () {
             $bahans = \App\Models\Bahan::all();
             return view('pegawai.dashboard', compact('bahans'));
         })->name('pegawai.dashboard');
+
+        // Transaksi Stok (SRS 3.4.1.4 & 3.4.1.5)
+        Route::get('/transaksi/masuk', [TransaksiController::class, 'indexMasuk'])->name('transaksi.masuk');
+        Route::post('/transaksi/masuk', [TransaksiController::class, 'storeMasuk']);
+        Route::get('/transaksi/keluar', [TransaksiController::class, 'indexKeluar'])->name('transaksi.keluar');
+        Route::post('/transaksi/keluar', [TransaksiController::class, 'storeKeluar']);
     });
 });
 

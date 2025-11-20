@@ -21,7 +21,8 @@
 
     <div class="container">
         <h2 class="mb-4">📊 Pantau Status Stok</h2>
-
+                <a href="{{ route('transaksi.masuk') }}" class="btn btn-success btn-sm me-2">📥 Stok Masuk</a>
+        <a href="{{ route('transaksi.keluar') }}" class="btn btn-danger btn-sm">📤 Stok Keluar</a>
         <div class="table-responsive">
             <table class="table table-hover align-middle shadow-sm">
                 <thead class="table-light">
