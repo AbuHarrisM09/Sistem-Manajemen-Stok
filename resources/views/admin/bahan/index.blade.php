@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
         <h2>📦 Data Bahan</h2>
         <a href="{{ route('admin.bahan.create') }}" class="btn btn-primary">+ Tambah Bahan</a>
     </div>
