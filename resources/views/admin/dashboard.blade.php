@@ -21,7 +21,9 @@
 
     <div class="container">
         <h2 class="mb-4">📊 Pantau Status Stok</h2>
-
+         <a href="{{ route('admin.bahan.index') }}" class="btn btn-primary">
+            <i class="bi bi-box-seam me-1"></i>Kelola Data Bahan
+        </a>
         <div class="table-responsive">
             <table class="table table-hover align-middle shadow-sm">
                 <thead class="table-light">
