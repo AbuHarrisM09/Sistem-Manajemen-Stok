@@ -14,7 +14,14 @@ class TransaksiController extends Controller
     public function indexMasuk()
     {
         $bahans = Bahan::all();
-        return view('pegawai.transaksi.masuk', compact('bahans'));
+        
+        // Ambil riwayat transaksi masuk
+        $transaksis = TransaksiStok::with(['bahan', 'pengguna'])
+            ->where('jenis_transaksi', 'masuk')
+            ->latest('tanggal')
+            ->paginate(10);
+            
+        return view('pegawai.transaksi.masuk', compact('bahans', 'transaksis'));
     }
 
     public function storeMasuk(Request $request)
@@ -39,13 +46,20 @@ class TransaksiController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        return redirect()->back()->with('success', 'Transaksi stok masuk berhasil dicatat.');
+        return redirect()->route('transaksi.masuk')->with('success', 'Transaksi stok masuk berhasil dicatat.');
     }
 
     public function indexKeluar()
     {
         $bahans = Bahan::all();
-        return view('pegawai.transaksi.keluar', compact('bahans'));
+        
+        // Ambil riwayat transaksi keluar
+        $transaksis = TransaksiStok::with(['bahan', 'pengguna'])
+            ->where('jenis_transaksi', 'keluar')
+            ->latest('tanggal')
+            ->paginate(10);
+            
+        return view('pegawai.transaksi.keluar', compact('bahans', 'transaksis'));
     }
 
     public function storeKeluar(Request $request)
@@ -79,6 +93,6 @@ class TransaksiController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        return redirect()->back()->with('success', 'Transaksi stok keluar berhasil dicatat.');
+        return redirect()->route('transaksi.keluar')->with('success', 'Transaksi stok keluar berhasil dicatat.');
     }
 }
