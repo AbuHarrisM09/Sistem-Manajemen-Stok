@@ -23,89 +23,7 @@
         </div>
     </div>
 
-    <!-- TOP ROW: Stats cards (kiri) + Chart (kanan) -->
-    <!-- Penting: gunakan align-items-start agar card TIDAK ikut memanjang setinggi chart -->
-    <div class="row g-2 mb-2 align-items-start">
-        <!-- Kiri: 4 mini cards dengan tinggi natural (seperti semula) -->
-        <div class="col-xl-8">
-            <div class="row g-2">
-                <div class="col-6 col-md-3">
-                    <div class="card border-0 shadow-sm stat-card">
-                        <div class="card-body py-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="text-muted mb-1 small text-uppercase">Total</p>
-                                    <h3 class="fw-bold mb-0" style="font-size:1.2rem;">{{ $totalBahan }}</h3>
-                                </div>
-                                <i class="bi bi-box-seam text-primary" style="font-size:1.3rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <div class="card border-0 shadow-sm stat-card">
-                        <div class="card-body py-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="text-muted mb-1 small text-uppercase">Aman</p>
-                                    <h3 class="fw-bold text-success mb-0" style="font-size:1.2rem;">{{ $stokAman }}</h3>
-                                </div>
-                                <i class="bi bi-check-circle text-success" style="font-size:1.3rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <div class="card border-0 shadow-sm stat-card">
-                        <div class="card-body py-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="text-muted mb-1 small text-uppercase">Menipis</p>
-                                    <h3 class="fw-bold text-warning mb-0" style="font-size:1.2rem;">{{ $stokMenipis }}</h3>
-                                </div>
-                                <i class="bi bi-exclamation-triangle text-warning" style="font-size:1.3rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <div class="card border-0 shadow-sm stat-card">
-                        <div class="card-body py-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="text-muted mb-1 small text-uppercase">Habis</p>
-                                    <h3 class="fw-bold text-danger mb-0" style="font-size:1.2rem;">{{ $stokHabis }}</h3>
-                                </div>
-                                <i class="bi bi-x-circle text-danger" style="font-size:1.3rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kanan: Chart kecil, sejajar dengan cards -->
-        <div class="col-xl-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-2">
-                    <h6 class="mb-0 fw-bold" style="font-size:1rem;">
-                        <i class="bi bi-pie-chart me-2 text-primary"></i>Statistik Status Stok
-                    </h6>
-                </div>
-                <div class="card-body d-flex align-items-center justify-content-center py-2">
-                    <!-- Chart kecil - tidak memenuhi tinggi kolom -->
-                    <div class="w-100" style="max-width:240px; aspect-ratio:1/1; margin:auto;">
-                        <canvas id="stockChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QUICK ACTIONS BAR -->
+    <!-- Aksi Cepat: tambah bahan, kelola bahan, tambah pegawai, kelola pegawai -->
     <div class="row g-2 mb-2">
         <div class="col-6 col-md-3">
             <a href="{{ route('admin.bahan.create') }}" class="btn btn-primary w-100">
@@ -118,18 +36,114 @@
             </a>
         </div>
         <div class="col-6 col-md-3">
-            <a href="{{ route('transaksi.masuk') }}" class="btn btn-outline-success w-100">
-                <i class="bi bi-arrow-down-circle me-1"></i>Stok Masuk
+            <a href="{{ route('admin.pegawai.create') }}" class="btn btn-success w-100">
+                <i class="bi bi-person-plus-fill me-1"></i>Tambah Pegawai
             </a>
         </div>
         <div class="col-6 col-md-3">
-            <a href="{{ route('transaksi.keluar') }}" class="btn btn-outline-danger w-100">
-                <i class="bi bi-arrow-up-circle me-1"></i>Stok Keluar
+            <a href="{{ route('admin.pegawai.index') }}" class="btn btn-outline-success w-100">
+                <i class="bi bi-people-fill me-1"></i>Kelola Pegawai
             </a>
         </div>
     </div>
 
-    <!-- TABLE -->
+    <!-- Stats cards (bahan) + Chart (kanan) -->
+    <div class="row g-2 mb-2 align-items-start">
+        <!-- Kiri: 4 cards compact -->
+        <div class="col-xl-8">
+            <div class="row g-2">
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small text-uppercase">Total Bahan</p>
+                                    <h3 class="fw-bold mb-0" style="font-size:1.2rem;">{{ $totalBahan }}</h3>
+                                </div>
+                                <i class="bi bi-box-seam text-primary" style="font-size:1.3rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small text-uppercase">Aman</p>
+                                    <h3 class="fw-bold text-success mb-0" style="font-size:1.2rem;">{{ $stokAman }}</h3>
+                                </div>
+                                <i class="bi bi-check-circle text-success" style="font-size:1.3rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small text-uppercase">Menipis</p>
+                                    <h3 class="fw-bold text-warning mb-0" style="font-size:1.2rem;">{{ $stokMenipis }}</h3>
+                                </div>
+                                <i class="bi bi-exclamation-triangle text-warning" style="font-size:1.3rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small text-uppercase">Habis</p>
+                                    <h3 class="fw-bold text-danger mb-0" style="font-size:1.2rem;">{{ $stokHabis }}</h3>
+                                </div>
+                                <i class="bi bi-x-circle text-danger" style="font-size:1.3rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optional: ringkasan pegawai -->
+            @isset($totalPegawai)
+            <div class="row g-2 mt-1">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small text-uppercase">Total Pegawai</p>
+                                    <h3 class="fw-bold mb-0" style="font-size:1.2rem;">{{ $totalPegawai }}</h3>
+                                </div>
+                                <i class="bi bi-people-fill text-success" style="font-size:1.3rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endisset
+        </div>
+
+        <!-- Kanan: Chart kecil -->
+        <div class="col-xl-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-2">
+                    <h6 class="mb-0 fw-bold" style="font-size:1rem;">
+                        <i class="bi bi-pie-chart me-2 text-primary"></i>Statistik Status Stok
+                    </h6>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center py-2">
+                    <div class="w-100" style="max-width:240px; aspect-ratio:1/1; margin:auto;">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabel status stok -->
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
@@ -203,12 +217,6 @@
         </div>
     </div>
 </div>
-
-<style>
-/* Pastikan card statistik tidak memanjang; tetap compact seperti semula */
-.stat-card { height: auto; }
-.stat-card .card-body { padding: .6rem .75rem; }
-</style>
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

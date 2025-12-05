@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bahan;
@@ -11,16 +11,16 @@ class DashboardController extends Controller
     {
         $bahans = Bahan::all();
 
-        $totalBahan = $bahans->count();
-        $stokAman = $bahans->filter(fn($b) => $b->status_stok === 'normal')->count();
-        $stokMenipis = $bahans->filter(fn($b) => $b->status_stok === 'menipis')->count(); // fixed name
-        $stokHabis = $bahans->filter(fn($b) => $b->status_stok === 'habis')->count();
+        $totalBahan  = $bahans->count();
+        $stokAman    = $bahans->filter(fn($b) => $b->status_stok === 'normal')->count();
+        $stokMenipis = $bahans->filter(fn($b) => $b->status_stok === 'menipis')->count();
+        $stokHabis   = $bahans->filter(fn($b) => $b->status_stok === 'habis')->count();
 
-        return view('admin.dashboard', compact(
+        return view('pegawai.dashboard', compact(
             'bahans',
             'totalBahan',
             'stokAman',
-            'stokMenipis',   // fixed name
+            'stokMenipis',
             'stokHabis'
         ));
     }

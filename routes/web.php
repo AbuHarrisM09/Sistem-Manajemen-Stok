@@ -1,31 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\BahanController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Pegawai\TransaksiController;
 use App\Http\Controllers\Pegawai\DashboardController as PegawaiDashboardController;
 use App\Http\Middleware\RoleMiddleware;
-use Illuminate\Support\Facades\Auth;
 
 // Redirect root ke dashboard sesuai role atau login
 Route::get('/', function () {
     if (Auth::guard('pengguna')->check()) {
         $user = Auth::guard('pengguna')->user();
-        
-        // Redirect sesuai role
+
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'pegawai') {
-            return redirect()->route('pegawai. dashboard');
+            return redirect()->route('pegawai.dashboard'); // FIX: hilangkan spasi
         }
-        
-        // Fallback jika role tidak dikenali
         return redirect()->route('login');
     }
-    
-    // Belum login → ke login
     return redirect()->route('login');
 });
 
@@ -40,13 +37,24 @@ Route::middleware('auth:pengguna')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // === ADMIN ONLY ===
-    Route::middleware([RoleMiddleware::class .  ':admin'])->group(function () {
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         // Dashboard Admin
         Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-        // CRUD Data Bahan
+        // CRUD Data Bahan + Manajemen Pegawai
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('bahan', BahanController::class);
+
+            // Manajemen Pegawai (tanpa status)
+            Route::prefix('pegawai')->name('pegawai.')->group(function () {
+                Route::get('/', [AdminUserController::class, 'index'])->name('index');
+                Route::get('/create', [AdminUserController::class, 'create'])->name('create');
+                Route::post('/', [AdminUserController::class, 'store'])->name('store');
+                Route::get('/{pengguna}/edit', [AdminUserController::class, 'edit'])->name('edit');
+                Route::put('/{pengguna}', [AdminUserController::class, 'update'])->name('update');
+                Route::delete('/{pengguna}', [AdminUserController::class, 'destroy'])->name('destroy');
+                // Tidak ada toggleActive karena kita tidak pakai status
+            });
         });
     });
 
@@ -58,8 +66,7 @@ Route::middleware('auth:pengguna')->group(function () {
         // Transaksi Stok
         Route::prefix('transaksi')->name('transaksi.')->group(function () {
             Route::get('/masuk', [TransaksiController::class, 'indexMasuk'])->name('masuk');
-            Route::post('/masuk', [TransaksiController::class, 'storeMasuk'])->name('masuk. store');
-            
+            Route::post('/masuk', [TransaksiController::class, 'storeMasuk'])->name('masuk.store'); // FIX name
             Route::get('/keluar', [TransaksiController::class, 'indexKeluar'])->name('keluar');
             Route::post('/keluar', [TransaksiController::class, 'storeKeluar'])->name('keluar.store');
         });

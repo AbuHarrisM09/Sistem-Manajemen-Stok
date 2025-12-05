@@ -12,12 +12,12 @@
         :root {
             --sidebar-width: 260px;
             --topbar-height: 60px;
-            --base-font-size: 14px;           /* turunkan dari default ~16px */
-            --heading-scale: 0.9;             /* heading sedikit lebih kecil */
-            --btn-scale: 0.9;                 /* tombol sedikit lebih kecil */
-            --table-font-size: 13px;          /* font tabel lebih kecil */
-            --badge-font-size: 12px;          /* font badge kecil */
-            --spacing-scale: 0.9;             /* spacing sedikit dikurangi */
+            --base-font-size: 14px;
+            --heading-scale: 0.9;
+            --btn-scale: 0.9;
+            --table-font-size: 13px;
+            --badge-font-size: 12px;
+            --spacing-scale: 0.9;
         }
 
         html { font-size: var(--base-font-size); }
@@ -36,7 +36,7 @@
         h5 { font-size: calc(1.1rem * var(--heading-scale)); }
         h6 { font-size: calc(1.0rem * var(--heading-scale)); }
 
-        /* Spacing scaling for common utilities */
+        /* Spacing scaling */
         .p-4 { padding: calc(1.5rem * var(--spacing-scale)) !important; }
         .py-3 { padding-top: calc(1rem * var(--spacing-scale)) !important; padding-bottom: calc(1rem * var(--spacing-scale)) !important; }
         .px-4 { padding-left: calc(1.5rem * var(--spacing-scale)) !important; padding-right: calc(1.5rem * var(--spacing-scale)) !important; }
@@ -119,6 +119,7 @@
 <body>
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
+    <!-- Sidebar -->
     <nav id="sidebar">
         <div class="sidebar-header">
             @if(auth('pengguna')->check() && auth('pengguna')->user()->isAdmin())
@@ -137,6 +138,7 @@
         <div class="nav-section">
             <ul class="nav flex-column">
                 @if(auth('pengguna')->check() && auth('pengguna')->user()->isAdmin())
+                    <!-- Admin menu -->
                     <li class="nav-item">
                         <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                             <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
@@ -148,6 +150,7 @@
                         </a>
                     </li>
                 @else
+                    <!-- Pegawai menu -->
                     <li class="nav-item">
                         <a href="{{ route('pegawai.dashboard') }}" class="nav-link {{ request()->routeIs('pegawai.dashboard') ? 'active' : '' }}">
                             <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
@@ -155,6 +158,7 @@
                     </li>
                 @endif
 
+                <!-- Shared menu (Admin & Pegawai) -->
                 <li class="nav-item">
                     <a href="{{ route('transaksi.masuk') }}" class="nav-link {{ request()->routeIs('transaksi.masuk') ? 'active' : '' }}">
                         <i class="bi bi-arrow-down-circle"></i> <span>Stok Masuk</span>
@@ -170,11 +174,17 @@
                         <i class="bi bi-clock-history"></i> <span>Riwayat</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
-                    </a>
-                </li>
+
+                <!-- Laporan: hanya admin, aman jika route belum ada -->
+                @if(auth('pengguna')->check() && auth('pengguna')->user()->isAdmin())
+                    @if(\Illuminate\Support\Facades\Route::has('admin.laporan.index'))
+                        <li class="nav-item">
+                            <a href="{{ route('admin.laporan.index') }}" class="nav-link {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                                <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
+                            </a>
+                        </li>
+                    @endif
+                @endif
             </ul>
         </div>
 
@@ -187,6 +197,7 @@
         </div>
     </nav>
 
+    <!-- Topbar -->
     <nav id="topbar">
         <div class="topbar-content">
             <button id="sidebarCollapse" class="sidebarCollapse" aria-label="Toggle sidebar">
@@ -215,6 +226,7 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
     <main id="content">
         @yield('content')
     </main>

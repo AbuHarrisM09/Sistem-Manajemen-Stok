@@ -14,7 +14,8 @@ class Pengguna extends Authenticatable
     protected $fillable = [
         'username',
         'password',
-        'role',
+        'role',     // 'admin' | 'pegawai'
+        'active',   // optional boolean, jika Anda pakai status aktif/nonaktif
     ];
 
     protected $hidden = [
@@ -24,10 +25,15 @@ class Pengguna extends Authenticatable
     // Mutator: otomatis hash password
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        // Jika value sudah di-hash (misal panjang 60 untuk bcrypt), jangan di-hash ulang
+        if ($value && strlen($value) === 60 && preg_match('/^\$2y\$/', $value)) {
+            $this->attributes['password'] = $value;
+        } else {
+            $this->attributes['password'] = Hash::make($value);
+        }
     }
 
-    // Relasi
+    // Relasi (opsional, sesuaikan jika tabel relasi ada)
     public function transaksiStok()
     {
         return $this->hasMany(TransaksiStok::class, 'id_pengguna');
@@ -42,5 +48,10 @@ class Pengguna extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isPegawai(): bool
+    {
+        return $this->role === 'pegawai';
     }
 }
