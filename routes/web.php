@@ -3,8 +3,31 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\BahanController;
-use App\Http\Controllers\Pegawai\TransaksiController; // ← tambahkan ini
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Pegawai\TransaksiController;
+use App\Http\Controllers\Pegawai\DashboardController as PegawaiDashboardController;
 use App\Http\Middleware\RoleMiddleware;
+use Illuminate\Support\Facades\Auth;
+
+// Redirect root ke dashboard sesuai role atau login
+Route::get('/', function () {
+    if (Auth::guard('pengguna')->check()) {
+        $user = Auth::guard('pengguna')->user();
+        
+        // Redirect sesuai role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'pegawai') {
+            return redirect()->route('pegawai. dashboard');
+        }
+        
+        // Fallback jika role tidak dikenali
+        return redirect()->route('login');
+    }
+    
+    // Belum login → ke login
+    return redirect()->route('login');
+});
 
 // Guest: hanya bisa ke login
 Route::middleware('guest:pengguna')->group(function () {
@@ -17,34 +40,28 @@ Route::middleware('auth:pengguna')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // === ADMIN ONLY ===
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+    Route::middleware([RoleMiddleware::class .  ':admin'])->group(function () {
         // Dashboard Admin
-        Route::get('/admin/dashboard', function () {
-            $bahans = \App\Models\Bahan::all();
-            return view('admin.dashboard', compact('bahans'));
-        })->name('admin.dashboard');
+        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-        // CRUD Data Bahan (SRS 3.4.1.1–3.4.1.3)
-        Route::resource('admin/bahan', BahanController::class)->names('admin.bahan');
+        // CRUD Data Bahan
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::resource('bahan', BahanController::class);
+        });
     });
 
     // === PEGAWAI & ADMIN (boleh akses transaksi) ===
     Route::middleware([RoleMiddleware::class . ':pegawai,admin'])->group(function () {
         // Dashboard Pegawai
-        Route::get('/pegawai/dashboard', function () {
-            $bahans = \App\Models\Bahan::all();
-            return view('pegawai.dashboard', compact('bahans'));
-        })->name('pegawai.dashboard');
+        Route::get('/pegawai/dashboard', [PegawaiDashboardController::class, 'index'])->name('pegawai.dashboard');
 
-        // Transaksi Stok (SRS 3.4.1.4 & 3.4.1.5)
-        Route::get('/transaksi/masuk', [TransaksiController::class, 'indexMasuk'])->name('transaksi.masuk');
-        Route::post('/transaksi/masuk', [TransaksiController::class, 'storeMasuk']);
-        Route::get('/transaksi/keluar', [TransaksiController::class, 'indexKeluar'])->name('transaksi.keluar');
-        Route::post('/transaksi/keluar', [TransaksiController::class, 'storeKeluar']);
+        // Transaksi Stok
+        Route::prefix('transaksi')->name('transaksi.')->group(function () {
+            Route::get('/masuk', [TransaksiController::class, 'indexMasuk'])->name('masuk');
+            Route::post('/masuk', [TransaksiController::class, 'storeMasuk'])->name('masuk. store');
+            
+            Route::get('/keluar', [TransaksiController::class, 'indexKeluar'])->name('keluar');
+            Route::post('/keluar', [TransaksiController::class, 'storeKeluar'])->name('keluar.store');
+        });
     });
-});
-
-// Redirect root ke login
-Route::get('/', function () {
-    return redirect()->route('login');
 });

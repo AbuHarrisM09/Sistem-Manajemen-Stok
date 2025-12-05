@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Validator;
 
 class BahanController extends Controller
 {
+    // Daftar satuan yang diizinkan (standar)
+    private array $allowedUnits = ['kg','g','mg','liter','ml','pcs','pack','box','meter','cm','mm','lusin','rim'];
+
     public function index()
     {
         $bahans = Bahan::all();
@@ -17,14 +20,18 @@ class BahanController extends Controller
 
     public function create()
     {
-        return view('admin.bahan.create');
+        // Kirim daftar satuan ke view agar dropdown dinamis
+        $units = $this->allowedUnits;
+        return view('admin.bahan.create', compact('units'));
     }
 
     public function store(Request $request)
     {
+        // Validasi dasar
         $validator = Validator::make($request->all(), [
             'nama_bahan' => 'required|unique:bahan,nama_bahan',
-            'satuan' => 'required',
+            'satuan' => 'required|string',
+            'satuan_lainnya' => 'nullable|string',
             'stok_minimum' => 'required|integer|min:0',
         ], [
             'nama_bahan.unique' => 'Nama bahan sudah terdaftar.',
@@ -34,20 +41,45 @@ class BahanController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        Bahan::create($request->only('nama_bahan', 'satuan', 'stok_minimum'));
+        // Normalisasi satuan
+        $satuan = strtolower($request->input('satuan'));
+
+        if ($satuan === 'lainnya') {
+            $custom = trim($request->input('satuan_lainnya', ''));
+            if ($custom === '') {
+                return back()->withErrors(['satuan_lainnya' => 'Satuan kustom wajib diisi.'])->withInput();
+            }
+            $satuan = $custom; // gunakan satuan kustom
+        } else {
+            // Pastikan satuan termasuk daftar standar
+            if (!in_array($satuan, $this->allowedUnits, true)) {
+                return back()->withErrors(['satuan' => 'Satuan tidak valid.'])->withInput();
+            }
+        }
+
+        Bahan::create([
+            'nama_bahan' => $request->input('nama_bahan'),
+            'satuan' => $satuan,
+            'stok_minimum' => (int) $request->input('stok_minimum'),
+        ]);
+
         return redirect()->route('admin.bahan.index')->with('success', 'Data bahan berhasil ditambahkan.');
     }
 
     public function edit(Bahan $bahan)
     {
-        return view('admin.bahan.edit', compact('bahan'));
+        // Kirim daftar satuan dan info apakah satuan saat ini ada di daftar
+        $units = $this->allowedUnits;
+        $inList = in_array(strtolower($bahan->satuan), $units, true);
+        return view('admin.bahan.edit', compact('bahan', 'units', 'inList'));
     }
 
     public function update(Request $request, Bahan $bahan)
     {
         $validator = Validator::make($request->all(), [
             'nama_bahan' => 'required|unique:bahan,nama_bahan,' . $bahan->id_bahan . ',id_bahan',
-            'satuan' => 'required',
+            'satuan' => 'required|string',
+            'satuan_lainnya' => 'nullable|string',
             'stok_minimum' => 'required|integer|min:0',
         ]);
 
@@ -55,7 +87,27 @@ class BahanController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        $bahan->update($request->only('nama_bahan', 'satuan', 'stok_minimum'));
+        // Normalisasi satuan
+        $satuan = strtolower($request->input('satuan'));
+
+        if ($satuan === 'lainnya') {
+            $custom = trim($request->input('satuan_lainnya', ''));
+            if ($custom === '') {
+                return back()->withErrors(['satuan_lainnya' => 'Satuan kustom wajib diisi.'])->withInput();
+            }
+            $satuan = $custom;
+        } else {
+            if (!in_array($satuan, $this->allowedUnits, true)) {
+                return back()->withErrors(['satuan' => 'Satuan tidak valid.'])->withInput();
+            }
+        }
+
+        $bahan->update([
+            'nama_bahan' => $request->input('nama_bahan'),
+            'satuan' => $satuan,
+            'stok_minimum' => (int) $request->input('stok_minimum'),
+        ]);
+
         return redirect()->route('admin.bahan.index')->with('success', 'Data bahan berhasil diperbarui.');
     }
 
