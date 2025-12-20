@@ -175,15 +175,13 @@
                     </a>
                 </li>
 
-                <!-- Laporan: hanya admin, aman jika route belum ada -->
+                <!-- Laporan: hanya admin -->
                 @if(auth('pengguna')->check() && auth('pengguna')->user()->isAdmin())
-                    @if(\Illuminate\Support\Facades\Route::has('admin.laporan.index'))
-                        <li class="nav-item">
-                            <a href="{{ route('admin.laporan.index') }}" class="nav-link {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
-                                <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
-                            </a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a href="{{ route('admin.laporan.index') }}" class="nav-link {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                            <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
+                        </a>
+                    </li>
                 @endif
             </ul>
         </div>

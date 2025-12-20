@@ -47,6 +47,15 @@
         </div>
     </div>
 
+    <!-- Tambahan tombol untuk laporan -->
+    <div class="row g-2 mb-2">
+        <div class="col-12">
+            <a href="{{ route('admin.laporan.index') }}" class="btn btn-info w-100">
+                <i class="bi bi-file-earmark-text me-1"></i>Lihat Laporan & Log Stok
+            </a>
+        </div>
+    </div>
+
     <!-- Stats cards (bahan) + Chart (kanan) -->
     <div class="row g-2 mb-2 align-items-start">
         <!-- Kiri: 4 cards compact -->

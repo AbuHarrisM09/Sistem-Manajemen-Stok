@@ -29,6 +29,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="px-3 py-2">Username</th>
+                            <th class="py-2">Nama Lengkap</th>
                             <th class="py-2">Dibuat</th>
                             <th class="py-2">Aksi</th>
                         </tr>
@@ -37,6 +38,7 @@
                         @forelse($pegawais as $p)
                         <tr>
                             <td class="px-3"><strong>{{ $p->username }}</strong></td>
+                            <td>{{ $p->nama ?? '-' }}</td>
                             <td class="text-muted">{{ optional($p->created_at)->format('d M Y H:i') }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
@@ -55,7 +57,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="text-center text-muted py-4">
+                            <td colspan="4" class="text-center text-muted py-4">
                                 <i class="bi bi-inbox fs-4 d-block mb-2"></i>Tidak ada pegawai.
                             </td>
                         </tr>

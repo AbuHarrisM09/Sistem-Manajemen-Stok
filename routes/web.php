@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\BahanController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Pegawai\TransaksiController;
 use App\Http\Controllers\Pegawai\DashboardController as PegawaiDashboardController;
 use App\Http\Middleware\RoleMiddleware;
@@ -44,6 +45,14 @@ Route::middleware('auth:pengguna')->group(function () {
         // CRUD Data Bahan + Manajemen Pegawai
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('bahan', BahanController::class);
+
+            // Laporan Stok
+            Route::prefix('laporan')->name('laporan.')->group(function () {
+                Route::get('/', [LaporanController::class, 'index'])->name('index');
+                Route::get('/export', [LaporanController::class, 'exportExcel'])->name('export');
+                Route::get('/export-masuk', [LaporanController::class, 'exportMasuk'])->name('export.masuk');
+                Route::get('/export-keluar', [LaporanController::class, 'exportKeluar'])->name('export.keluar');
+            });
 
             // Manajemen Pegawai (tanpa status)
             Route::prefix('pegawai')->name('pegawai.')->group(function () {

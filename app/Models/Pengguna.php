@@ -13,6 +13,7 @@ class Pengguna extends Authenticatable
 
     protected $fillable = [
         'username',
+        'nama',
         'password',
         'role',     // 'admin' | 'pegawai'
         'active',   // optional boolean, jika Anda pakai status aktif/nonaktif

@@ -28,6 +28,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'username' => ['required', 'string', 'min:3', 'max:50', 'alpha_dash', 'unique:pengguna,username'],
+            'nama' => ['nullable', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ], [
             'username.unique' => 'Username sudah digunakan.',
@@ -36,6 +37,7 @@ class UserController extends Controller
 
         Pengguna::create([
             'username' => $validated['username'],
+            'nama' => $validated['nama'] ?? null,
             'password' => Hash::make($validated['password']),
             'role'     => 'pegawai',
         ]);
@@ -60,11 +62,13 @@ class UserController extends Controller
                 'required', 'string', 'min:3', 'max:50', 'alpha_dash',
                 Rule::unique('pengguna', 'username')->ignore($pengguna->id_pengguna, 'id_pengguna'),
             ],
+            'nama' => ['nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 
         $data = [
             'username' => $validated['username'],
+            'nama' => $validated['nama'] ?? null,
         ];
 
         if (!empty($validated['password'])) {

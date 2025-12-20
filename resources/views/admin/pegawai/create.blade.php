@@ -34,6 +34,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label fw-semibold">Nama Lengkap</label>
+                    <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
+                           value="{{ old('nama') }}" placeholder="contoh: Budi Santoso">
+                    @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
                     <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                            placeholder="min. 6 karakter" required>
