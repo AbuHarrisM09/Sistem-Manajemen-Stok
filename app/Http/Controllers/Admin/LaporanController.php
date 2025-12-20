@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TransaksiStok;
 use App\Models\Pengguna;
+use App\Exports\LaporanStokExport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
@@ -63,66 +65,55 @@ class LaporanController extends Controller
         $transaksis = $query->latest('tanggal')->get();
 
         // Generate filename
-        $filename = 'Laporan_Stok_' . Carbon::now()->format('Y-m-d_His') . '.csv';
+        $filename = 'Laporan_Stok_' . Carbon::now()->format('Y-m-d_His') . '.xlsx';
 
-        // Set headers for CSV download
-        $headers = [
-            'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0'
-        ];
-
-        // Create callback function for streaming
-        $callback = function() use ($transaksis) {
-            $file = fopen('php://output', 'w');
-            
-            // Add UTF-8 BOM for Excel compatibility
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-            // Header row
-            fputcsv($file, [
-                'No',
-                'Tanggal',
-                'Nama Bahan',
-                'Jenis Transaksi',
-                'Jumlah',
-                'Satuan',
-                'Pegawai',
-                'Keterangan'
-            ]);
-
-            // Data rows
-            $no = 1;
-            foreach ($transaksis as $transaksi) {
-                fputcsv($file, [
-                    $no++,
-                    Carbon::parse($transaksi->tanggal)->format('d-m-Y'),
-                    $transaksi->bahan->nama_bahan ?? '-',
-                    ucfirst($transaksi->jenis_transaksi),
-                    $transaksi->jumlah_bahan,
-                    $transaksi->bahan->satuan ?? '-',
-                    $transaksi->pengguna->nama ?? '-',
-                    $transaksi->keterangan ?? '-'
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        // Export menggunakan Laravel Excel
+        return Excel::download(new LaporanStokExport($transaksis, 'Laporan Stok'), $filename);
     }
 
     public function exportMasuk(Request $request)
     {
-        $request->merge(['jenis_transaksi' => 'masuk']);
-        return $this->exportExcel($request);
+        $query = TransaksiStok::with(['bahan', 'pengguna'])->where('jenis_transaksi', 'masuk');
+
+        // Filter berdasarkan pegawai
+        if ($request->filled('id_pengguna')) {
+            $query->where('id_pengguna', $request->id_pengguna);
+        }
+
+        // Filter berdasarkan tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal', '>=', $request->tanggal_dari);
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+        }
+
+        $transaksis = $query->latest('tanggal')->get();
+        $filename = 'Laporan_Stok_Masuk_' . Carbon::now()->format('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(new LaporanStokExport($transaksis, 'Stok Masuk'), $filename);
     }
 
     public function exportKeluar(Request $request)
     {
-        $request->merge(['jenis_transaksi' => 'keluar']);
-        return $this->exportExcel($request);
+        $query = TransaksiStok::with(['bahan', 'pengguna'])->where('jenis_transaksi', 'keluar');
+
+        // Filter berdasarkan pegawai
+        if ($request->filled('id_pengguna')) {
+            $query->where('id_pengguna', $request->id_pengguna);
+        }
+
+        // Filter berdasarkan tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal', '>=', $request->tanggal_dari);
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+        }
+
+        $transaksis = $query->latest('tanggal')->get();
+        $filename = 'Laporan_Stok_Keluar_' . Carbon::now()->format('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(new LaporanStokExport($transaksis, 'Stok Keluar'), $filename);
     }
 }

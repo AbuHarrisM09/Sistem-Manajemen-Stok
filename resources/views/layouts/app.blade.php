@@ -169,16 +169,17 @@
                         <i class="bi bi-arrow-up-circle"></i> <span>Stok Keluar</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-clock-history"></i> <span>Riwayat</span>
-                    </a>
-                </li>
 
-                <!-- Laporan: hanya admin -->
+                <!-- Laporan -->
                 @if(auth('pengguna')->check() && auth('pengguna')->user()->isAdmin())
                     <li class="nav-item">
                         <a href="{{ route('admin.laporan.index') }}" class="nav-link {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                            <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
+                        </a>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a href="{{ route('pegawai.laporan.index') }}" class="nav-link {{ request()->routeIs('pegawai.laporan.*') ? 'active' : '' }}">
                             <i class="bi bi-file-earmark-text"></i> <span>Laporan</span>
                         </a>
                     </li>

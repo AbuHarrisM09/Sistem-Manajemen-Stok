@@ -79,5 +79,10 @@ Route::middleware('auth:pengguna')->group(function () {
             Route::get('/keluar', [TransaksiController::class, 'indexKeluar'])->name('keluar');
             Route::post('/keluar', [TransaksiController::class, 'storeKeluar'])->name('keluar.store');
         });
+
+        // Laporan untuk Pegawai (hanya view, tanpa export)
+        Route::prefix('pegawai/laporan')->name('pegawai.laporan.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Pegawai\LaporanController::class, 'index'])->name('index');
+        });
     });
 });
