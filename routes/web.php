@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Pegawai\TransaksiController;
 use App\Http\Controllers\Pegawai\DashboardController as PegawaiDashboardController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\RoleMiddleware;
 
 // Redirect root ke dashboard sesuai role atau login
@@ -36,6 +37,10 @@ Route::middleware('guest:pengguna')->group(function () {
 // Auth: semua yang login
 Route::middleware('auth:pengguna')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Profil (Admin & Pegawai): kelola akun sendiri
+    Route::get('/profil', [ProfileController::class, 'edit'])->name('profil.edit');
+    Route::put('/profil', [ProfileController::class, 'update'])->name('profil.update');
 
     // === ADMIN ONLY ===
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {

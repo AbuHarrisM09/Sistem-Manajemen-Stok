@@ -3,32 +3,11 @@
 @section('title', 'Data Bahan - J Stok')
 
 @section('content')
-<<<<<<< HEAD
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
         <h2>📦 Data Bahan</h2>
         <a href="{{ route('admin.bahan.create') }}" class="btn btn-primary">+ Tambah Bahan</a>
-=======
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-3">
-        <div class="col">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div>
-                    <h2 class="fw-bold mb-1" style="font-size:1.3rem;">
-                        <i class="bi bi-box-seam me-2 text-primary"></i>Data Bahan
-                    </h2>
-                    <p class="text-muted mb-0" style="font-size:.9rem;">Kelola data bahan inventori</p>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('admin.bahan.create') }}" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-1"></i>Tambah Bahan
-                    </a>
-                </div>
-            </div>
-        </div>
->>>>>>> 88b69662b81f682f7c0623f0271e0531d2552ffc
     </div>
 
     <!-- Toolbar: search + filter -->
