@@ -4,33 +4,42 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="row mb-2">
-        <div class="col d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold mb-0" style="font-size:1.25rem;"><i class="bi bi-arrow-up-circle me-2 text-danger"></i>Catat Stok Keluar</h2>
-            <a href="{{ route('pegawai.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="fw-bold mb-1 d-flex align-items-center">
+                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                        <i class="bi bi-arrow-up-circle text-white"></i>
+                    </span>
+                    Catat Stok Keluar
+                </h2>
+                <p class="text-muted mb-0 small">Catat penggunaan bahan dan pantau stok tersisa</p>
+            </div>
+            @php $backRoute = auth('pengguna')->user()?->isAdmin() ? 'admin.dashboard' : 'pegawai.dashboard'; @endphp
+            <a href="{{ route($backRoute) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Kembali
             </a>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert">
             <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>{{ $errors->first('jumlah_bahan') ?? $errors->first() }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="row g-2">
+    <div class="row g-3">
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-danger text-white border-0 py-2">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header text-white border-0 py-3" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
                     <h6 class="mb-0 fw-bold"><i class="bi bi-dash-circle me-2"></i>Form Stok Keluar</h6>
                 </div>
                 <div class="card-body">
@@ -75,8 +84,8 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('pegawai.dashboard') }}" class="btn btn-outline-secondary btn-sm">Batal</a>
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-save me-1"></i>Simpan</button>
+                            <a href="{{ route($backRoute) }}" class="btn btn-outline-secondary">Batal</a>
+                            <button type="submit" class="btn btn-danger"><i class="bi bi-save me-1"></i>Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -85,19 +94,24 @@
 
         <!-- Ringkas: daftar bahan & stok untuk referensi -->
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-2">
-                    <h6 class="mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>Ringkasan Stok</h6>
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold d-flex align-items-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                            <i class="bi bi-list-check text-white"></i>
+                        </span>
+                        Ringkasan Stok
+                    </h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                        <table class="table table-hover align-middle mb-0 modern-table">
+                            <thead>
                                 <tr>
-                                    <th class="px-3 py-2">Nama Bahan</th>
-                                    <th class="py-2">Satuan</th>
-                                    <th class="py-2">Stok Saat Ini</th>
-                                    <th class="py-2">Status</th>
+                                    <th class="px-4 py-3">Nama Bahan</th>
+                                    <th class="py-3">Satuan</th>
+                                    <th class="py-3">Stok Saat Ini</th>
+                                    <th class="py-3">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,15 +126,15 @@
                                         };
                                     @endphp
                                     <tr>
-                                        <td class="px-3"><strong>{{ $bahan->nama_bahan }}</strong></td>
+                                        <td class="px-4"><strong>{{ $bahan->nama_bahan }}</strong></td>
                                         <td><span class="badge bg-light text-dark">{{ strtoupper($bahan->satuan) }}</span></td>
                                         <td><span class="badge bg-info bg-opacity-10 text-info border border-info">{{ $stok }}</span></td>
                                         <td><span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span></td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted py-4">
-                                            <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                        <td colspan="4" class="text-center text-muted py-5">
+                                            <i class="bi bi-inbox fs-1 d-block mb-2" style="opacity:0.3;"></i>
                                             Belum ada data bahan.
                                         </td>
                                     </tr>

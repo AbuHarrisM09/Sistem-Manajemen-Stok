@@ -5,19 +5,36 @@
 @section('content')
 <div class="container-fluid">
     <!-- Header -->
-    <div class="row mb-3">
-        <div class="col">
-            <h2 class="fw-bold mb-1">
-                <i class="bi bi-file-earmark-text me-2 text-primary"></i>Laporan Stok Masuk & Keluar
-            </h2>
-            <p class="text-muted mb-0">Log aktivitas stok yang dikerjakan oleh pegawai</p>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); overflow:hidden;">
+                <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3 py-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-file-earmark-text text-white" style="font-size:2rem;"></i>
+                        <div>
+                            <h2 class="text-white fw-bold mb-1">Laporan Stok Masuk & Keluar</h2>
+                            <p class="text-white text-opacity-75 mb-0 small">Pantau log aktivitas stok oleh pegawai</p>
+                        </div>
+                    </div>
+                    @php
+                        $totalTransaksi = method_exists($transaksis, 'total') ? $transaksis->total() : $transaksis->count();
+                    @endphp
+                    <div class="text-white text-end">
+                        <p class="mb-1 small">Total Transaksi</p>
+                        <h3 class="fw-bold mb-0">{{ $totalTransaksi }}</h3>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Filter Section -->
-    <div class="card mb-3">
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white border-0 py-3">
+            <h6 class="mb-0 fw-bold d-flex align-items-center"><i class="bi bi-funnel me-2 text-primary"></i>Filter Laporan</h6>
+        </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.laporan.index') }}" class="row g-3">
+            <form method="GET" action="{{ route('admin.laporan.index') }}" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Jenis Transaksi</label>
                     <select name="jenis_transaksi" class="form-select">
@@ -45,61 +62,68 @@
                     <label class="form-label">Tanggal Sampai</label>
                     <input type="date" name="tanggal_sampai" class="form-control" value="{{ request('tanggal_sampai') }}">
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label d-block">&nbsp;</label>
+                <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-funnel me-1"></i>Filter
                     </button>
+                    @if(request()->anyFilled(['jenis_transaksi','id_pengguna','tanggal_dari','tanggal_sampai']))
+                        <a href="{{ route('admin.laporan.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
+                    @endif
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Export Buttons -->
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="{{ route('admin.laporan.export', request()->all()) }}" class="btn btn-success">
-                    <i class="bi bi-file-earmark-excel me-1"></i>Export Semua ke Excel
-                </a>
-                <a href="{{ route('admin.laporan.export.masuk', request()->all()) }}" class="btn btn-outline-success">
-                    <i class="bi bi-arrow-down-circle me-1"></i>Export Stok Masuk
-                </a>
-                <a href="{{ route('admin.laporan.export.keluar', request()->all()) }}" class="btn btn-outline-danger">
-                    <i class="bi bi-arrow-up-circle me-1"></i>Export Stok Keluar
-                </a>
-            </div>
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body d-flex flex-wrap align-items-end gap-3">
+            <form class="d-flex flex-wrap align-items-end gap-2" method="GET">
+                <div>
+                    <label class="form-label mb-1">Bulan Export (opsional)</label>
+                    <input type="month" name="bulan" class="form-control" value="{{ request('bulan') }}" style="min-width: 180px;">
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" formaction="{{ route('admin.laporan.export') }}" class="btn btn-success">
+                        <i class="bi bi-file-earmark-excel me-1"></i>Export Semua
+                    </button>
+                    <button type="submit" formaction="{{ route('admin.laporan.export.masuk') }}" class="btn btn-outline-success">
+                        <i class="bi bi-arrow-down-circle me-1"></i>Export Masuk
+                    </button>
+                    <button type="submit" formaction="{{ route('admin.laporan.export.keluar') }}" class="btn btn-outline-danger">
+                        <i class="bi bi-arrow-up-circle me-1"></i>Export Keluar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Transaksi Table -->
-    <div class="card">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Daftar Transaksi</h5>
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold d-flex align-items-center"><i class="bi bi-table me-2 text-primary"></i>Daftar Transaksi</h5>
+            <span class="badge bg-light text-dark border">{{ $totalTransaksi }} transaksi</span>
         </div>
         <div class="card-body p-0">
             @if($transaksis->count() > 0)
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
+                <table class="table table-hover mb-0 align-middle modern-table">
+                    <thead>
                         <tr>
-                            <th style="width: 50px;">No</th>
-                            <th>Tanggal</th>
-                            <th>Nama Bahan</th>
-                            <th>Jenis</th>
-                            <th>Jumlah</th>
-                            <th>Pegawai</th>
-                            <th>Keterangan</th>
+                            <th style="width: 70px;" class="px-4 py-3">No</th>
+                            <th class="py-3">Tanggal</th>
+                            <th class="py-3">Nama Bahan</th>
+                            <th class="py-3">Jenis</th>
+                            <th class="py-3">Jumlah</th>
+                            <th class="py-3">Pegawai</th>
+                            <th class="py-3">Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($transaksis as $index => $transaksi)
                         <tr>
-                            <td>{{ $transaksis->firstItem() + $index }}</td>
+                            <td class="px-4">{{ $transaksis->firstItem() + $index }}</td>
                             <td>{{ \Carbon\Carbon::parse($transaksi->tanggal)->format('d/m/Y') }}</td>
-                            <td>
-                                <strong>{{ $transaksi->bahan->nama_bahan ?? '-' }}</strong>
-                            </td>
+                            <td><strong>{{ $transaksi->bahan->nama_bahan ?? '-' }}</strong></td>
                             <td>
                                 @if($transaksi->jenis_transaksi == 'masuk')
                                     <span class="badge bg-success">
@@ -112,13 +136,20 @@
                                 @endif
                             </td>
                             <td>
-                                <strong>{{ number_format($transaksi->jumlah_bahan) }}</strong>
-                                {{ $transaksi->bahan->satuan ?? '' }}
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info">
+                                    {{ number_format($transaksi->jumlah_bahan) }} {{ $transaksi->bahan->satuan ?? '' }}
+                                </span>
                             </td>
                             <td>
-                                <i class="bi bi-person-circle me-1"></i>
-                                {{ $transaksi->pengguna->nama ?? '-' }}
-                                <small class="text-muted d-block">{{ $transaksi->pengguna->username ?? '' }}</small>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width:36px; height:36px;">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ $transaksi->pengguna->nama ?? '-' }}</strong>
+                                        <small class="text-muted d-block">{{ $transaksi->pengguna->username ?? '' }}</small>
+                                    </div>
+                                </div>
                             </td>
                             <td>{{ $transaksi->keterangan ?? '-' }}</td>
                         </tr>
@@ -134,7 +165,7 @@
             @endif
         </div>
         @if($transaksis->hasPages())
-        <div class="card-footer bg-white">
+        <div class="card-footer bg-white border-0">
             {{ $transaksis->links() }}
         </div>
         @endif

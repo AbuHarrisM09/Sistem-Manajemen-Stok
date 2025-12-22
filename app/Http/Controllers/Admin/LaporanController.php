@@ -26,7 +26,7 @@ class LaporanController extends Controller
             $query->where('id_pengguna', $request->id_pengguna);
         }
 
-        // Filter berdasarkan tanggal
+        // Filter berdasarkan tanggal (untuk tampilan)
         if ($request->filled('tanggal_dari')) {
             $query->whereDate('tanggal', '>=', $request->tanggal_dari);
         }
@@ -54,12 +54,18 @@ class LaporanController extends Controller
             $query->where('id_pengguna', $request->id_pengguna);
         }
 
-        // Filter berdasarkan tanggal
-        if ($request->filled('tanggal_dari')) {
-            $query->whereDate('tanggal', '>=', $request->tanggal_dari);
-        }
-        if ($request->filled('tanggal_sampai')) {
-            $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+        // Filter khusus export: bulan lebih prioritas, fallback ke rentang tanggal
+        if ($request->filled('bulan')) {
+            $start = Carbon::parse($request->bulan . '-01')->startOfMonth();
+            $end = (clone $start)->endOfMonth();
+            $query->whereBetween('tanggal', [$start->toDateString(), $end->toDateString()]);
+        } else {
+            if ($request->filled('tanggal_dari')) {
+                $query->whereDate('tanggal', '>=', $request->tanggal_dari);
+            }
+            if ($request->filled('tanggal_sampai')) {
+                $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+            }
         }
 
         $transaksis = $query->latest('tanggal')->get();
@@ -80,12 +86,17 @@ class LaporanController extends Controller
             $query->where('id_pengguna', $request->id_pengguna);
         }
 
-        // Filter berdasarkan tanggal
-        if ($request->filled('tanggal_dari')) {
-            $query->whereDate('tanggal', '>=', $request->tanggal_dari);
-        }
-        if ($request->filled('tanggal_sampai')) {
-            $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+        if ($request->filled('bulan')) {
+            $start = Carbon::parse($request->bulan . '-01')->startOfMonth();
+            $end = (clone $start)->endOfMonth();
+            $query->whereBetween('tanggal', [$start->toDateString(), $end->toDateString()]);
+        } else {
+            if ($request->filled('tanggal_dari')) {
+                $query->whereDate('tanggal', '>=', $request->tanggal_dari);
+            }
+            if ($request->filled('tanggal_sampai')) {
+                $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+            }
         }
 
         $transaksis = $query->latest('tanggal')->get();
@@ -103,12 +114,17 @@ class LaporanController extends Controller
             $query->where('id_pengguna', $request->id_pengguna);
         }
 
-        // Filter berdasarkan tanggal
-        if ($request->filled('tanggal_dari')) {
-            $query->whereDate('tanggal', '>=', $request->tanggal_dari);
-        }
-        if ($request->filled('tanggal_sampai')) {
-            $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+        if ($request->filled('bulan')) {
+            $start = Carbon::parse($request->bulan . '-01')->startOfMonth();
+            $end = (clone $start)->endOfMonth();
+            $query->whereBetween('tanggal', [$start->toDateString(), $end->toDateString()]);
+        } else {
+            if ($request->filled('tanggal_dari')) {
+                $query->whereDate('tanggal', '>=', $request->tanggal_dari);
+            }
+            if ($request->filled('tanggal_sampai')) {
+                $query->whereDate('tanggal', '<=', $request->tanggal_sampai);
+            }
         }
 
         $transaksis = $query->latest('tanggal')->get();

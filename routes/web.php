@@ -47,6 +47,11 @@ Route::middleware('auth:pengguna')->group(function () {
         // Dashboard Admin
         Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+        // Shortcut /admin -> dashboard admin
+        Route::get('/admin', function () {
+            return redirect()->route('admin.dashboard');
+        })->name('admin.home');
+
         // CRUD Data Bahan + Manajemen Pegawai
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('bahan', BahanController::class);
