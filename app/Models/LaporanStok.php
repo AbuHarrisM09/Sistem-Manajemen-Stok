@@ -6,24 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class LaporanStok extends Model
 {
-    protected $table = 'laporan_stok';
-    protected $primaryKey = 'id_laporan';
+    protected $table = 'transaksi_stok';
+    protected $primaryKey = 'id_transaksi';
     public $timestamps = true;
 
     protected $fillable = [
+        'id_bahan',
         'id_pengguna',
-        'periode_awal',
-        'periode_akhir',
-        'tanggal_cetak',
+        'tanggal',
+        'jumlah_bahan',
+        'jenis_transaksi',
+        'keterangan',
     ];
 
     protected $casts = [
-        'periode_awal' => 'date',
-        'periode_akhir' => 'date',
-        'tanggal_cetak' => 'date',
+        'tanggal' => 'date',
     ];
 
     // Relasi
+    public function bahan()
+    {
+        return $this->belongsTo(Bahan::class, 'id_bahan');
+    }
+
     public function pengguna()
     {
         return $this->belongsTo(Pengguna::class, 'id_pengguna');

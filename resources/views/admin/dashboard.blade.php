@@ -182,7 +182,7 @@
                 </div>
             </div>
 
-            <!-- Total Pegawai (optional) -->
+            <!-- Total Pegawai -->
             @isset($totalPegawai)
             <div class="row g-3 mt-0">
                 <div class="col-12">

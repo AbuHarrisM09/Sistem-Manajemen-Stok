@@ -19,7 +19,7 @@ class Bahan extends Model
     // Relasi
     public function transaksiStok()
     {
-        return $this->hasMany(TransaksiStok::class, 'id_bahan');
+        return $this->hasMany(LaporanStok::class, 'id_bahan');
     }
 
     // 💡 Hitung stok real-time (tidak simpan di DB)
@@ -43,5 +43,19 @@ class Bahan extends Model
         if ($stok <= 0) return 'habis';
         if ($stok <= $this->stok_minimum) return 'menipis';
         return 'normal';
+    }
+
+    public function tambahStokMasuk(int $jumlah): void
+    {
+    }
+
+    public function tambahStokKeluar(int $jumlah): bool
+    {
+        return $jumlah <= $this->stok_saat_ini;
+    }
+
+    public function isStokMinimum(): bool
+    {
+        return $this->stok_saat_ini <= $this->stok_minimum;
     }
 }

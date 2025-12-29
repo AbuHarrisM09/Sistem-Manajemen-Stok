@@ -16,7 +16,6 @@ class Pengguna extends Authenticatable
         'nama',
         'password',
         'role',     // 'admin' | 'pegawai'
-        'active',   // optional boolean, jika Anda pakai status aktif/nonaktif
     ];
 
     protected $hidden = [
@@ -26,7 +25,7 @@ class Pengguna extends Authenticatable
     // Mutator: otomatis hash password
     public function setPasswordAttribute($value)
     {
-        // Jika value sudah di-hash (misal panjang 60 untuk bcrypt), jangan di-hash ulang
+        // hash buat password
         if ($value && strlen($value) === 60 && preg_match('/^\$2y\$/', $value)) {
             $this->attributes['password'] = $value;
         } else {
@@ -34,15 +33,15 @@ class Pengguna extends Authenticatable
         }
     }
 
-    // Relasi (opsional, sesuaikan jika tabel relasi ada)
+    // Relasi
     public function transaksiStok()
     {
-        return $this->hasMany(TransaksiStok::class, 'id_pengguna');
+        return $this->hasMany(LaporanStok::class, 'id_pengguna');
     }
 
     public function laporanStok()
     {
-        return $this->hasMany(LaporanStok::class, 'id_pengguna');
+        return $this->hasMany(LaporanPeriode::class, 'id_pengguna');
     }
 
     // Helper
@@ -54,5 +53,14 @@ class Pengguna extends Authenticatable
     public function isPegawai(): bool
     {
         return $this->role === 'pegawai';
+    }
+
+   
+    public static function login(string $username, string $password): bool
+    {
+        return \Illuminate\Support\Facades\Auth::guard('pengguna')->attempt([
+            'username' => $username,
+            'password' => $password,
+        ]);
     }
 }

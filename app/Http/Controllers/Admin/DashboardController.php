@@ -13,14 +13,14 @@ class DashboardController extends Controller
 
         $totalBahan = $bahans->count();
         $stokAman = $bahans->filter(fn($b) => $b->status_stok === 'normal')->count();
-        $stokMenipis = $bahans->filter(fn($b) => $b->status_stok === 'menipis')->count(); // fixed name
+        $stokMenipis = $bahans->filter(fn($b) => $b->status_stok === 'menipis')->count();
         $stokHabis = $bahans->filter(fn($b) => $b->status_stok === 'habis')->count();
 
         return view('admin.dashboard', compact(
             'bahans',
             'totalBahan',
             'stokAman',
-            'stokMenipis',   // fixed name
+            'stokMenipis',
             'stokHabis'
         ));
     }

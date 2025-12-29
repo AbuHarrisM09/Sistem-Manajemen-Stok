@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TransaksiStok;
+use App\Models\LaporanStok;
 use App\Models\Pengguna;
 use App\Exports\LaporanStokExport;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TransaksiStok::with(['bahan', 'pengguna']);
+        $query = LaporanStok::with(['bahan', 'pengguna']);
 
         // Filter berdasarkan jenis transaksi
         if ($request->filled('jenis_transaksi')) {
@@ -42,7 +42,7 @@ class LaporanController extends Controller
 
     public function exportExcel(Request $request)
     {
-        $query = TransaksiStok::with(['bahan', 'pengguna']);
+        $query = LaporanStok::with(['bahan', 'pengguna']);
 
         // Filter berdasarkan jenis transaksi
         if ($request->filled('jenis_transaksi')) {
@@ -79,7 +79,7 @@ class LaporanController extends Controller
 
     public function exportMasuk(Request $request)
     {
-        $query = TransaksiStok::with(['bahan', 'pengguna'])->where('jenis_transaksi', 'masuk');
+        $query = LaporanStok::with(['bahan', 'pengguna'])->where('jenis_transaksi', 'masuk');
 
         // Filter berdasarkan pegawai
         if ($request->filled('id_pengguna')) {
@@ -107,7 +107,7 @@ class LaporanController extends Controller
 
     public function exportKeluar(Request $request)
     {
-        $query = TransaksiStok::with(['bahan', 'pengguna'])->where('jenis_transaksi', 'keluar');
+        $query = LaporanStok::with(['bahan', 'pengguna'])->where('jenis_transaksi', 'keluar');
 
         // Filter berdasarkan pegawai
         if ($request->filled('id_pengguna')) {

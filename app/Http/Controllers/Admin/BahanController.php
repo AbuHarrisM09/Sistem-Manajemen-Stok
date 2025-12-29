@@ -20,7 +20,7 @@ class BahanController extends Controller
 
     public function create()
     {
-        // Kirim daftar satuan ke view agar dropdown dinamis
+        // Kirim daftar satuan ke view agar dropdown
         $units = $this->allowedUnits;
         return view('admin.bahan.create', compact('units'));
     }
@@ -49,9 +49,8 @@ class BahanController extends Controller
             if ($custom === '') {
                 return back()->withErrors(['satuan_lainnya' => 'Satuan kustom wajib diisi.'])->withInput();
             }
-            $satuan = $custom; // gunakan satuan kustom
+            $satuan = $custom;
         } else {
-            // Pastikan satuan termasuk daftar standar
             if (!in_array($satuan, $this->allowedUnits, true)) {
                 return back()->withErrors(['satuan' => 'Satuan tidak valid.'])->withInput();
             }

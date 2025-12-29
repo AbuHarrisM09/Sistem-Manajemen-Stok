@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\BahanController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\LaporanController;
-use App\Http\Controllers\Pegawai\TransaksiController;
+use App\Http\Controllers\Pegawai\LaporanStokController;
 use App\Http\Controllers\Pegawai\DashboardController as PegawaiDashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\RoleMiddleware;
@@ -21,7 +21,7 @@ Route::get('/', function () {
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'pegawai') {
-            return redirect()->route('pegawai.dashboard'); // FIX: hilangkan spasi
+            return redirect()->route('pegawai.dashboard');
         }
         return redirect()->route('login');
     }
@@ -84,10 +84,10 @@ Route::middleware('auth:pengguna')->group(function () {
 
         // Transaksi Stok
         Route::prefix('transaksi')->name('transaksi.')->group(function () {
-            Route::get('/masuk', [TransaksiController::class, 'indexMasuk'])->name('masuk');
-            Route::post('/masuk', [TransaksiController::class, 'storeMasuk'])->name('masuk.store'); // FIX name
-            Route::get('/keluar', [TransaksiController::class, 'indexKeluar'])->name('keluar');
-            Route::post('/keluar', [TransaksiController::class, 'storeKeluar'])->name('keluar.store');
+            Route::get('/masuk', [LaporanStokController::class, 'indexMasuk'])->name('masuk');
+            Route::post('/masuk', [LaporanStokController::class, 'storeMasuk'])->name('masuk.store'); // FIX name
+            Route::get('/keluar', [LaporanStokController::class, 'indexKeluar'])->name('keluar');
+            Route::post('/keluar', [LaporanStokController::class, 'storeKeluar'])->name('keluar.store');
         });
 
         // Laporan untuk Pegawai (hanya view, tanpa export)

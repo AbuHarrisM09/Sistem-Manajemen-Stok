@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
-use App\Models\TransaksiStok;
+use App\Models\LaporanStok;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TransaksiStok::with(['bahan', 'pengguna']);
+        $query = LaporanStok::with(['bahan', 'pengguna']);
 
         // Filter berdasarkan jenis transaksi
         if ($request->filled('jenis_transaksi')) {
